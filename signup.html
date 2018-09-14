@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Login/Signup</title>
+        <title>Sign Up - Tic Tac Toe Multiplayer</title>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -107,7 +107,7 @@
 
                         var self = this;
 
-                        axios.get('/api/auth.php?action=validateUniqueUsername&username='+this.username)
+                        axios.get('./api/auth.php?action=validateUniqueUsername&username='+this.username)
                             .then(function (response) {
                             
                                 if(response.data === 'available' && self.username.length>=5){
@@ -124,12 +124,12 @@
                         this.validUsername = false;
                         var self = this;
 
-                        axios.get('/api/auth.php?action=signup&username='+this.username+'&password='+this.password)
+                        axios.get('./api/auth.php?action=signup&username='+this.username+'&password='+this.password)
                             .then(function (response) {
                             
                                 if(response.data === 'created'){
 
-                                    axios.get('/api/auth.php?action=login&username='+self.username+'&password='+self.password)
+                                    axios.get('./api/auth.php?action=login&username='+self.username+'&password='+self.password)
                                         .then(function(response){
 
                                             if(response.data == 'success'){
@@ -147,9 +147,9 @@
 
                 },
 
-                created: function(){
+                beforeCreate: function(){
 
-                    axios.get('/api/auth.php?action=status')
+                    axios.get('./api/auth.php?action=status')
                         .then(function (response) {
                         
                             if(response.data != false){

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Login/Signup</title>
+        <title>Login - Tic Tac Toe Multiplayer</title>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -79,7 +79,7 @@
 
                         this.validUsername = false;
 
-                        axios.get('/api/auth.php?action=login&username='+this.username+'&password='+this.password)
+                        axios.get('./api/auth.php?action=login&username='+this.username+'&password='+this.password)
                             .then(function (response) {
                             
                                 if(response.data === 'success'){
@@ -88,6 +88,7 @@
 
                                 }else if(response.data === 'invalid'){
 
+                                    M.Toast.dismissAll();
                                     M.toast({html: 'Invalid Username or Password'})
                                 }
 
@@ -99,9 +100,9 @@
 
                 },
 
-                created: function(){
+                beforeCreate: function(){
 
-                    axios.get('/api/auth.php?action=status')
+                    axios.get('./api/auth.php?action=status')
                         .then(function (response) {
                         
                             if(response.data != false){
