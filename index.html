@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Tic Tac Toe Multiplayer</title>
+        <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+        <style>
+            .username{
+                font-weight:700;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="container" id="app">
+
+            <div class="row"></div>
+
+            <div class="row">
+                <div class="col s12">
+                    <h4 class="light center">Tic Tac Toe Multiplayer</h4>
+                </div>
+                <div class="col s12">
+                    <p class="center">You are signed in as <span v-text="username" class="username"></span> (<a href="#" @click="logout"><u>logout</u></a>)</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s8 divider offset-s2"></div>
+            </div>
+
+            <section v-if="view=='menu'">
+
+                <div class="row"></div>
+                
+                <div class="row">
+                    <div class="col s12 center">
+                        <button class="btn-large waves-effect waves-light blue" @click="createSession">Create Session</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12 center">
+                        <button class="btn-large waves-effect waves-light blue" @click="joinSession">Join Session</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12 center">
+                        <button class="btn-large waves-effect waves-light blue">Help</button>
+                    </div>
+                </div>
+
+            </section>
+
+            <section v-if="view=='create'">
+
+                <div class="row"></div>
+
+                <div class="row">
+                    <div class="col s12 center">
+                        <h5 class="light">Create Session</h5>
+                        <p class="blue-text"><a href="#" @click="view='menu'"><u>Back</u></a></p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col s12 center">
+                        <h4 class="light">Your session id is: <span v-text="id"></span></h4>
+                    </div>
+                    <div class="col s12 center">
+                        <p>Waiting for a friend to join</p>
+                    </div>
+                </div>
+            
+            </section>
+
+            <section v-if="view=='join'">
+
+                <div class="row"></div>
+
+                <div class="row">
+                    <div class="col s12 center">
+                        <h5 class="light">Join Session</h5>
+                        <p class="blue-text"><a href="#" @click="view='menu'"><u>Back</u></a></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s6 offset-s3 center">
+                        <input placeholder="Enter Your Session ID Here" autocomplete="off" type="number" v-model="joinId" @keydown.enter="joinSessionCheck">
+                    </div>
+                    <div class="col s12 center">
+                        <button class="btn blue waves-effect waves-light" @click="joinSessionCheck">Join</button>
+                    </div>
+                </div>
+                
+                
+            
+            </section>
+
+            
+
+
+
+
+
+        </div>
+        <script type="text/javascript" src="js/materialize.min.js"></script>
+        <script type="text/javascript" src="js/axios.min.js"></script>
+        <script src="js/vue.js"></script>
+        <script>
+            
+            new Vue({
+
+                el: '#app',
+                data: {
+
+                    username: '',
+                    view: 'menu',
+                    id: '',
+                    joinId: ''
+
+                },
+                methods: {
+
+                    logout: function(){
+
+                        axios.get('./api/auth.php?action=logout')
+                        .then(function (response) {
+                        
+                            window.location = 'login.html';
+
+                        })
+
+                    },
+
+                    createSession: function(){
+
+                        var self = this;
+                        this.view = 'create';
+
+                        axios.get('./api/session.php?action=create&creator='+this.username)
+                            .then(function(response){
+
+                                self.id = response.data;
+                                setInterval(function(){ self.checkJoinerStatus() }, 3000);
+                            })
+                    },
+
+                    checkJoinerStatus: function(){
+                        
+                        axios.get('./api/session.php?action=checkJoiner&id='+this.id+'&username='+this.username)
+                            .then(function(response){
+                                if(response.data != 'waiting'){
+                                    window.location = 'game.php'
+                                }
+                            })
+                        
+                    },
+
+                    joinSession: function(){
+
+                        this.view = 'join'
+                    },
+
+                    joinSessionCheck: function(){
+
+                        
+
+                        axios.get('./api/session.php?action=join&username='+this.username+'&id='+this.joinId)
+                            .then(function(response){
+
+                                if(response.data == 'used'){
+                                    console.log("Error");
+                                }else{
+                                    window.location = 'game.php';
+                                }
+
+                            })
+                    }
+                },
+                beforeCreate: function(){
+
+                    var self = this;
+
+                    axios.get('./api/auth.php?action=status')
+                        .then(function (response) {
+                        
+                            if(response.data == false){
+                                window.location = 'login.html';
+                            }else{
+                                self.username = response.data;
+                            }
+
+                        })
+                }
+            });
+        </script>
+    </body>
+</html>
