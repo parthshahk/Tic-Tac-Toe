@@ -155,7 +155,7 @@
                         axios.get('./api/session.php?action=checkJoiner&id='+this.id+'&username='+this.username)
                             .then(function(response){
                                 if(response.data != 'waiting'){
-                                    window.location = 'game.php'
+                                    window.location = 'game.html'
                                 }
                             })
                         
@@ -176,7 +176,7 @@
                                 if(response.data == 'used'){
                                     console.log("Error");
                                 }else{
-                                    window.location = 'game.php';
+                                    window.location = 'game.html';
                                 }
 
                             })

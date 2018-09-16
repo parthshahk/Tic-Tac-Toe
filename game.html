@@ -73,12 +73,11 @@
                     username: '',
                     opponent: '',
 
-                    turn:'',
-
                     sid: '',
                     myType: '',
 
                     state: '',
+                    turn:'',
 
 
                 },
@@ -107,10 +106,8 @@
                             if(game.username == game.creator){
                                 self.opponent = game.joiner;
                             }else{
-                                self.opponent = game.created;
+                                self.opponent = game.creator;
                             }
-
-                            self.turn = game.creator
 
                         })
                 }  
