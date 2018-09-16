@@ -121,6 +121,22 @@
                             }
 
                         }
+                    },
+
+                    gameLoop: function(){
+
+                        var self = this;
+                        var game;
+
+                        axios.get('./api/game.php?action=gameUpdates')
+                            .then(function(response){
+
+                                game = response.data;
+                                self.turn = game.turn;
+                                self.state = game.state;
+                                self.updateBoard();
+
+                            })
                     }
                 },
 
@@ -150,6 +166,7 @@
 
                             self.updateBoard();
 
+                            setInterval(function(){ self.gameLoop() }, 2000);
                         })
                 }  
 
