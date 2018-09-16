@@ -45,7 +45,12 @@
                                 </tr>
                             </table>
                         </div>
-                        <div class="col s12 center">
+                        <div class="col s12 center" v-if="gameStatus != ''">
+                            <h5 v-if="gameStatus == 'draw'" class="red-text">Draw</h5>
+                            <h5 v-else><span v-text="gameStatus" class="green-text"></span> Wins!</h5>
+                            <button class="btn waves-effect waves-light" @click="playAgain">Play Again</button>
+                        </div>
+                        <div class="col s12 center" v-if="gameStatus == ''">
                             <h5 v-if="username==turn">Your turn</h5>
                             <h5 v-else><span v-text="opponent"></span>'s turn</h5>
                         </div>
@@ -85,10 +90,71 @@
                     state: '',
                     turn:'',
 
+                    gameStatus:''
+
 
                 },
 
                 methods: {
+
+                    playAgain: function(){
+                        // window.location = 'http://localhost/game.html';
+                        window.location = 'https://parthshah.xyz/tt/game.html';
+                    },
+
+                    decideWinner: function(){
+
+                        if(
+                            (this.c[0] != 'c' && this.c[0] != '') &&
+                            (this.c[1] != 'c' && this.c[1] != '') &&
+                            (this.c[2] != 'c' && this.c[2] != '') &&
+                            (this.c[3] != 'c' && this.c[3] != '') &&
+                            (this.c[4] != 'c' && this.c[4] != '') &&
+                            (this.c[5] != 'c' && this.c[5] != '') &&
+                            (this.c[6] != 'c' && this.c[6] != '') &&
+                            (this.c[7] != 'c' && this.c[7] != '') &&
+                            (this.c[8] != 'c' && this.c[8] != '')
+                        ){
+                            this.gameStatus = 'draw';
+                        }
+
+                        if(
+                            (this.c[0] == 'x' && this.c[1] == 'x' && this.c[2] == 'x') ||
+                            (this.c[3] == 'x' && this.c[4] == 'x' && this.c[5] == 'x') ||
+                            (this.c[6] == 'x' && this.c[7] == 'x' && this.c[8] == 'x') ||
+                            (this.c[0] == 'x' && this.c[3] == 'x' && this.c[6] == 'x') ||
+                            (this.c[1] == 'x' && this.c[4] == 'x' && this.c[7] == 'x') ||
+                            (this.c[2] == 'x' && this.c[5] == 'x' && this.c[8] == 'x') ||
+                            (this.c[0] == 'x' && this.c[4] == 'x' && this.c[8] == 'x') ||
+                            (this.c[2] == 'x' && this.c[4] == 'x' && this.c[6] == 'x')
+                        ){
+                            
+                            if(this.myType == 'x'){
+                                this.gameStatus = this.username;
+                            }else{
+                                this.gameStatus = this.opponent;
+                            }
+                        }
+
+                        if(
+                            (this.c[0] == 'o' && this.c[1] == 'o' && this.c[2] == 'o') ||
+                            (this.c[3] == 'o' && this.c[4] == 'o' && this.c[5] == 'o') ||
+                            (this.c[6] == 'o' && this.c[7] == 'o' && this.c[8] == 'o') ||
+                            (this.c[0] == 'o' && this.c[3] == 'o' && this.c[6] == 'o') ||
+                            (this.c[1] == 'o' && this.c[4] == 'o' && this.c[7] == 'o') ||
+                            (this.c[2] == 'o' && this.c[5] == 'o' && this.c[8] == 'o') ||
+                            (this.c[0] == 'o' && this.c[4] == 'o' && this.c[8] == 'o') ||
+                            (this.c[2] == 'o' && this.c[4] == 'o' && this.c[6] == 'o')
+                        ){
+                            
+                            if(this.myType == 'o'){
+                                this.gameStatus = this.username;
+                            }else{
+                                this.gameStatus = this.opponent;
+                            }
+                        }
+
+                    },
 
                     move: function(n){
 
@@ -99,8 +165,11 @@
                             if(this.myType == 'x'){
 
                                 Vue.set(this.c, n, 'x');
+                                this.turn = '';                                
+
                             }else{
                                 Vue.set(this.c, n, 'o');
+                                this.turn = '';
                             }
 
                             axios.get('./api/game.php?action=move&move='+n+'&type='+this.myType)
@@ -133,9 +202,9 @@
 
                                 game = response.data;
                                 self.turn = game.turn;
-                                self.state = game.state;
+                                self.state = game.state;     
                                 self.updateBoard();
-
+                                self.decideWinner();
                             })
                     }
                 },
