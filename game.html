@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Tic Tac Toe Multiplayer</title>
+        <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+        <link rel="stylesheet" href="css/game.css">
+        <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css'>
+    </head>
+    <body>
+        <div id="app">
+
+            <section>
+                <div class="row">
+                    <div class="col s12 center">
+                        <h4 class="light">Tic Tac Toe Multiplayer</h4>
+                    </div>
+                    <div class="col s12 center">
+                        <p>Yor are plaing as <b><span v-text="username"></span></b> against <b><span v-text="opponent"></span></b></p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="board">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12">
+                            <table>
+                                <tr>
+                                    <td :class="c1" @click="move(1)"></td>
+                                    <td :class="c2" @click="move(2)"></td>
+                                    <td :class="c3" @click="move(3)"></td>
+                                </tr>
+                                <tr>
+                                    <td :class="c4" @click="move(4)"></td>
+                                    <td :class="c5" @click="move(5)"></td>
+                                    <td :class="c6" @click="move(6)"></td>
+                                </tr>
+                                <tr>
+                                    <td :class="c7" @click="move(7)"></td>
+                                    <td :class="c8" @click="move(8)"></td>
+                                    <td :class="c9" @click="move(9)"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <script type="text/javascript" src="js/materialize.min.js"></script>
+        <script type="text/javascript" src="js/axios.min.js"></script>
+        <script src="js/vue.js"></script>
+        <script>
+            new Vue({
+
+                el: '#app',
+                data: {
+
+                    c1:'',
+                    c2:'',
+                    c3:'',
+                    c4:'',
+                    c5:'',
+                    c6:'',
+                    c7:'',
+                    c8:'',
+                    c9:'',
+
+                    username: '',
+                    opponent: '',
+
+                    turn:'',
+
+                    sid: '',
+                    myType: '',
+
+                    state: '',
+
+
+                },
+
+                methods: {
+
+                    move: function(n){
+
+                        console.log(n);
+                    }
+                },
+
+                created: function(){
+
+                    var self = this;
+                    var game;
+
+                    axios.get('./api/game.php?action=gameInfo')
+                        .then(function(response){
+
+                            game = response.data;
+
+                            self.username = game.username;
+                            self.sid = game.id;
+
+                            if(game.username == game.creator){
+                                self.opponent = game.joiner;
+                            }else{
+                                self.opponent = game.created;
+                            }
+
+                            self.turn = game.creator
+
+                        })
+                }  
+
+            });
+        </script>
+    </body>
+</html>
