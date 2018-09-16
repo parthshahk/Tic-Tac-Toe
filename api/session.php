@@ -7,7 +7,7 @@
 
         $creator = $_REQUEST['creator'];
 
-        mysqli_query($con, "INSERT INTO session (Creator) VALUES('$creator')");
+        mysqli_query($con, "INSERT INTO session (Creator,Turn) VALUES('$creator', '$creator')");
         $id = mysqli_insert_id($con);
         echo $id;
 

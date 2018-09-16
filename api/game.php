@@ -18,7 +18,7 @@
 
 
 
-        $_SESSION['state'] = array("c","c","c","x","c","c","c","o","c");
+        $_SESSION['state'] = array("c","c","c","c","c","c","c","c","c");
         $game['state'] = $_SESSION['state'];
 
 
