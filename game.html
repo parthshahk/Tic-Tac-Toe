@@ -18,7 +18,7 @@
                         <h4 class="light">Tic Tac Toe Multiplayer</h4>
                     </div>
                     <div class="col s12 center">
-                        <p>Yor are plaing as <b><span v-text="username"></span></b> against <b><span v-text="opponent"></span></b></p>
+                        <p>Yor are plaing as <b><span v-text="username" class="green-text"></span></b> against <b><span v-text="opponent" class="red-text"></span></b></p>
                     </div>
                 </div>
             </section>
@@ -29,21 +29,25 @@
                         <div class="col s12">
                             <table>
                                 <tr>
-                                    <td :class="c1" @click="move(1)"></td>
-                                    <td :class="c2" @click="move(2)"></td>
-                                    <td :class="c3" @click="move(3)"></td>
+                                    <td :class="c[0]" @click="move(0)"></td>
+                                    <td :class="c[1]" @click="move(1)"></td>
+                                    <td :class="c[2]" @click="move(2)"></td>
                                 </tr>
                                 <tr>
-                                    <td :class="c4" @click="move(4)"></td>
-                                    <td :class="c5" @click="move(5)"></td>
-                                    <td :class="c6" @click="move(6)"></td>
+                                    <td :class="c[3]" @click="move(3)"></td>
+                                    <td :class="c[4]" @click="move(4)"></td>
+                                    <td :class="c[5]" @click="move(5)"></td>
                                 </tr>
                                 <tr>
-                                    <td :class="c7" @click="move(7)"></td>
-                                    <td :class="c8" @click="move(8)"></td>
-                                    <td :class="c9" @click="move(9)"></td>
+                                    <td :class="c[6]" @click="move(6)"></td>
+                                    <td :class="c[7]" @click="move(7)"></td>
+                                    <td :class="c[8]" @click="move(8)"></td>
                                 </tr>
                             </table>
+                        </div>
+                        <div class="col s12 center">
+                            <h5 v-if="username==turn">Your turn</h5>
+                            <h5 v-else><span v-text="opponent"></span>'s turn</h5>
                         </div>
                     </div>
                 </div>
@@ -60,15 +64,17 @@
                 el: '#app',
                 data: {
 
-                    c1:'',
-                    c2:'',
-                    c3:'',
-                    c4:'',
-                    c5:'',
-                    c6:'',
-                    c7:'',
-                    c8:'',
-                    c9:'',
+                    c:[
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ],
 
                     username: '',
                     opponent: '',
@@ -86,7 +92,35 @@
 
                     move: function(n){
 
-                        console.log(n);
+                        if(this.c[n] != '' || this.turn != this.username){
+                            return;
+                        }else{
+
+                            if(this.myType == 'x'){
+
+                                Vue.set(this.c, n, 'x');
+                            }else{
+                                Vue.set(this.c, n, 'o');
+                            }
+
+                            axios.get('./api/game.php?action=move&move='+n+'&type='+this.myType)
+                        }
+                        
+                    },
+
+                    updateBoard: function(){
+
+                        for(var i=0; i<9; i++){
+
+                            if(this.state[i] == 'x'){
+                                this.c[i] = 'x';
+                            }else if(this.state[i] == 'o'){
+                                this.c[i] = 'o';
+                            }else{
+                                continue;
+                            }
+
+                        }
                     }
                 },
 
@@ -102,12 +136,19 @@
 
                             self.username = game.username;
                             self.sid = game.id;
+                            self.turn = game.turn;
 
                             if(game.username == game.creator){
                                 self.opponent = game.joiner;
+                                self.myType = 'x';
                             }else{
                                 self.opponent = game.creator;
+                                self.myType = 'o';
                             }
+
+                            self.state = game.state;
+
+                            self.updateBoard();
 
                         })
                 }  
